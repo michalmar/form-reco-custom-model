@@ -9,9 +9,9 @@ https://docs.microsoft.com/en-us/azure/applied-ai-services/form-recognizer/quick
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
 
-endpoint = "https://mma-form-reco1.cognitiveservices.azure.com/"
+endpoint = "https://xxx.cognitiveservices.azure.com/"
 key = "***"
-model_id = "vyuctovatni-net"
+model_id = "xxx"
 
 # documentUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-layout.pdf"
 documentPath = "2100501128.pdf"

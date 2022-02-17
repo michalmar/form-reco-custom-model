@@ -12,7 +12,7 @@ print("\nProcessing...\n")
 # pdf_save = input("Save file as: ")
 # pdf_loc2 = input("Save location: ")
 
-pdf_save = "test-bez-hesla.pdf"
+pdf_save = "test-no-pass.pdf"
 pdf_loc2 = "."
 
 

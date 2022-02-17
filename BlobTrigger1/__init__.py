@@ -20,9 +20,9 @@ def main(myblob: func.InputStream):
                  f"Blob Size: {myblob.length} bytes")
     
     # This is the call to the Form Recognizer endpoint
-    endpoint = r"https://mma-form-reco1.cognitiveservices.azure.com/"
-    apim_key = "***"
-    model_id = "vyuctovatni-net"
+    endpoint = os.environ["form_reco_endpoint"]
+    apim_key = os.environ["form_reco_key"]
+    model_id = os.environ["form_reco_model_id"]
 
     full_recognizer_output = False
 

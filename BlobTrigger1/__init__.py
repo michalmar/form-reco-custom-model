@@ -23,7 +23,7 @@ def main(myblob: func.InputStream):
     endpoint = os.environ["form_reco_endpoint"]
     apim_key = os.environ["form_reco_key"]
     model_id = os.environ["form_reco_model_id"]
-
+    
     full_recognizer_output = False
 
     # post_url = endpoint + "/formrecognizer/v2.1/Layout/analyze"

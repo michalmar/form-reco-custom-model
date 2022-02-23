@@ -14,7 +14,7 @@ It combines two tutorials:
 
 * It uses Form Recognizer Python SDK v3.0 preview:
 
- `azure-ai-formrecognizer==3.2.0b2`
+ `azure-ai-formrecognizer==3.2.0b3`
 
 * Connection to Form Recognizer and selecting particular model is via Environment Variables:
 

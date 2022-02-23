@@ -10,4 +10,4 @@ requests
 pandas
 numpy
 azure-core
-azure-ai-formrecognizer==3.2.0b2
+azure-ai-formrecognizer==3.2.0b3

@@ -11,3 +11,4 @@ pandas
 numpy
 azure-core
 azure-ai-formrecognizer==3.2.0b3
+pikepdf

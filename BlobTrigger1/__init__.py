@@ -13,8 +13,10 @@ import azure.functions as func
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
 
+import pikepdf
+import tempfile
 
-def main(myblob: func.InputStream):
+def main(myblob: func.InputStream, context: func.Context):
     logging.info(f"Python blob trigger function processed blob \n"
                  f"Name: {myblob.name}\n"
                  f"Blob Size: {myblob.length} bytes")
@@ -23,14 +25,31 @@ def main(myblob: func.InputStream):
     endpoint = os.environ["form_reco_endpoint"]
     apim_key = os.environ["form_reco_key"]
     model_id = os.environ["form_reco_model_id"]
+    pdf_pass = os.environ["pdf_pass"]
     
     full_recognizer_output = False
 
     # post_url = endpoint + "/formrecognizer/v2.1/Layout/analyze"
     # read the PDF document
     source = myblob.read()
-    text1=os.path.basename(myblob.name)
 
+    text1=os.path.basename(myblob.name)
+    local_path = os.path.join(tempfile.gettempdir(),text1)
+    logging.info(f"local_path is {local_path}")
+
+    with open(local_path, mode='wb') as f:
+        f.write(source)
+
+    pdf = pikepdf.open(local_path, password=pdf_pass)
+    local_path_nopass = os.path.join(tempfile.gettempdir(),text1+".out")
+    
+    pdf.save(local_path_nopass)
+    logging.info(f"password removed and saved to {local_path_nopass}")
+
+    with open(local_path_nopass, mode='rb') as f:
+        source = f.read()
+
+    logging.info(f"starting document analysis")
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint, credential=AzureKeyCredential(apim_key)
     )
@@ -38,6 +57,9 @@ def main(myblob: func.InputStream):
     # Make sure your document's type is included in the list of document types the custom model can analyze
     # poller = document_analysis_client.begin_analyze_document_from_url(model_id, documentUrl)
     poller = document_analysis_client.begin_analyze_document(model_id, source)
+
+    os.remove(local_path)
+    os.remove(local_path_nopass)
 
     result = poller.result()
     detected_kv_pairs = []

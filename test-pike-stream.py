@@ -6,7 +6,10 @@ import os
 pdf_loc = os.path.join("data","test.pdf")
 pdf_pass = "abc1234"
 
-pdf = pikepdf.open(pdf_loc, password=pdf_pass)
+with open(pdf_loc, mode='rb') as f:
+    source = f.read()
+    
+pdf = pikepdf.open(source, password=pdf_pass)
 
 print("\nProcessing...\n")
 

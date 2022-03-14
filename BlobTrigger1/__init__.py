@@ -14,10 +14,10 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
 
 
-def main(myblob: func.InputStream):
+def main(blobin: func.InputStream, blobout: func.Out[bytes], context: func.Context):
     logging.info(f"Python blob trigger function processed blob \n"
-                 f"Name: {myblob.name}\n"
-                 f"Blob Size: {myblob.length} bytes")
+                 f"Name: {blobin.name}\n"
+                 f"Blob Size: {blobin.length} bytes")
     
     # This is the call to the Form Recognizer endpoint
     endpoint = os.environ["form_reco_endpoint"]
@@ -28,8 +28,8 @@ def main(myblob: func.InputStream):
 
     # post_url = endpoint + "/formrecognizer/v2.1/Layout/analyze"
     # read the PDF document
-    source = myblob.read()
-    text1=os.path.basename(myblob.name)
+    source = blobin.read()
+    text1=os.path.basename(blobin.name)
 
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint, credential=AzureKeyCredential(apim_key)
@@ -48,7 +48,7 @@ def main(myblob: func.InputStream):
         print("Document was analyzed by model with ID {}".format(result.model_id))
         for name, field in document.fields.items():
             field_value = field.value if field.value else field.content
-            print("......found field {} of type '{}' with value '{}' and with confidence {}".format(name,field.value_type, field_value, field.confidence))
+            # print("......found field {} of type '{}' with value '{}' and with confidence {}".format(name,field.value_type, field_value, field.confidence))
             detected_kv_pairs.append([name, field_value, field.confidence])
 
     # convert detected key-value pairs to Pandas dataframe        
@@ -87,14 +87,8 @@ def main(myblob: func.InputStream):
         print("-----------------------------------")
     
 
-    # print(f"Uploading to output blob storage...")
-    # # This is the connection to the blob storage, with the Azure Python SDK
-    # blob_service_client = BlobServiceClient(account_url="mmaunistorage.core.windows.net", credential="SASTOKEN")
-
-    # # blob_service_client = BlobServiceClient.from_connection_string("DefaultEndpointsProtocol=https;AccountName="mmaunistorage";AccountKey=\"***\";EndpointSuffix=core.windows.net")
-    # container_client=blob_service_client.get_container_client("nemji-output")
-
-    # # Here is the upload to the blob storage
-    # tab1_csv=document_detected_kv_pairs.to_csv(header=True,index=False,mode='w')
-    # name1=(os.path.splitext(text1)[0]) +'.csv'
-    # container_client.upload_blob(name=name1,data=tab1_csv)
+    # convert dataframe into json then to byte array
+    blob_out_bytes = bytes(document_detected_kv_pairs.to_json(orient="records"), encoding='utf-8')
+    
+    # store in the output storage through Functions output binding
+    blobout.set(blob_out_bytes)

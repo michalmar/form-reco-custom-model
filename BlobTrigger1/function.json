@@ -2,10 +2,17 @@
   "scriptFile": "__init__.py",
   "bindings": [
     {
-      "name": "myblob",
+      "name": "blobin",
       "type": "blobTrigger",
       "direction": "in",
-      "path": "nemji-input/{name}",
+      "path": "docs-in/{name}",
+      "connection": "mmaunistorage_STORAGE"
+    },
+    {
+      "name": "blobout",
+      "type": "blob",
+      "direction": "out",
+      "path": "docs-out/{name}.json",
       "connection": "mmaunistorage_STORAGE"
     }
   ]
